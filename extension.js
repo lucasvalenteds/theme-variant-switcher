@@ -49,7 +49,7 @@ class ThemeVariantIndicator extends PanelMenu.Button {
 class I18n {
 
     constructor(domain) {
-	this.domain= GetText.domain(domain);
+	this.domain = GetText.domain(domain);
     }
 
     getText(key) {
