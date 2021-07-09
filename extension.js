@@ -1,4 +1,5 @@
 const ExtensionUtils = imports.misc.extensionUtils;
+const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const GetText = imports.gettext;
 const Style = imports.gi.St;
@@ -7,16 +8,38 @@ const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-class ThemeVariantIndicator extends PanelMenu.Button {
+class AdwaitaThemeVariantManager {
 
-    constructor(i18n) {
-	this.i18n = i18n;
+    useDark() {
+	this.useThemeVariant("Adwaita-dark");
     }
 
-    _init(i18n) {
+    useLight() {
+	this.useThemeVariant("Adwaita");
+    }
+
+    useThemeVariant(variant) {
+	this.setGSettingProperty("org.gnome.desktop.interface", "gtk-theme", variant);
+	this.setGSettingProperty("org.gnome.shell.extensions.user-theme", "name", variant);
+    }
+
+    setGSettingProperty(schema, key, value) {
+	GLib.spawn_command_line_sync(`gsettings set ${schema} ${key} ${value}`);
+    }
+}
+
+class ThemeVariantIndicator extends PanelMenu.Button {
+
+    constructor(i18n, manager) {
+	this.i18n = i18n;
+	this.manager = manager;
+    }
+
+    _init(i18n, manager) {
 	super._init(0.0, i18n.getText("indicator-name"));
 
 	this.i18n = i18n;
+	this.manager = manager;
 	this.add_child(this.createIcon());
 	this.menu.addMenuItem(this.createMenuItemDark());
 	this.menu.addMenuItem(this.createMenuItemLight());
@@ -32,18 +55,15 @@ class ThemeVariantIndicator extends PanelMenu.Button {
     createMenuItemDark() {
 	const label = this.i18n.getText("indicator-menu-item-label-dark")
 	const item = new PopupMenu.PopupMenuItem(label);
-	item.connect("activate", this.change);
+	item.connect("activate", () => this.manager.useDark());
 	return item;
     }
 
     createMenuItemLight() {
 	const label = this.i18n.getText("indicator-menu-item-label-light")
 	const item = new PopupMenu.PopupMenuItem(label);
-	item.connect("activate", this.change);
+	item.connect("activate", () => this.manager.useLight());
 	return item;
-    }
-
-    change() {
     }
 }
 
@@ -69,7 +89,8 @@ class Extension {
 
     enable() {
 	this.i18n = new I18n(this.domain);
-	this.indicator = new ExtensionIndicator(this.i18n);
+	this.manager = new AdwaitaThemeVariantManager();
+	this.indicator = new ExtensionIndicator(this.i18n, this.manager);
 
 	Main.panel.addToStatusArea(this.domain, this.indicator);
     }
@@ -78,6 +99,7 @@ class Extension {
 	this.indicator.destroy();
 	this.indicator = null;
 	this.i18n = null;
+	this.manager = null;
     }
 }
 
