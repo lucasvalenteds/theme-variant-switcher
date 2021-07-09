@@ -1,20 +1,20 @@
-const GETTEXT_DOMAIN = 'my-indicator-extension';
-
-const { GObject, St } = imports.gi;
-
-const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
-const getText = Gettext.gettext;
+const Style = imports.gi.St;
+const GObject = imports.gi.GObject;
 
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+
+const GETTEXT_DOMAIN = 'my-indicator-extension';
+const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
+const getText = Gettext.gettext;
 
 class ThemeVariantIndicator extends PanelMenu.Button {
 
     _init() {
 	super._init(0.0, getText('My Shiny Indicator'));
 
-	this.add_child(new St.Icon({
+	this.add_child(new Style.Icon({
 	    icon_name: 'face-smile-symbolic',
 	    style_class: 'system-status-icon',
 	}));
