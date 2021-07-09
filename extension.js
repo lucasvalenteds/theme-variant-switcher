@@ -10,30 +10,30 @@ const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const Indicator = GObject.registerClass(
-    class Indicator extends PanelMenu.Button {
-	_init() {
-	    super._init(0.0, getText('My Shiny Indicator'));
+class Indicator extends PanelMenu.Button {
+    _init() {
+	super._init(0.0, getText('My Shiny Indicator'));
 
-	    this.add_child(new St.Icon({
-		icon_name: 'face-smile-symbolic',
-		style_class: 'system-status-icon',
-	    }));
+	this.add_child(new St.Icon({
+	    icon_name: 'face-smile-symbolic',
+	    style_class: 'system-status-icon',
+	}));
 
-	    const darkThemeItem = new PopupMenu.PopupMenuItem(getText("Set dark theme"));
-	    darkThemeItem.connect("activate", () => {
-		Main.notify(getText("Dark theme set successfully"));
-	    });
-	    this.menu.addMenuItem(darkThemeItem);
+	const darkThemeItem = new PopupMenu.PopupMenuItem(getText("Set dark theme"));
+	darkThemeItem.connect("activate", () => {
+	    Main.notify(getText("Dark theme set successfully"));
+	});
+	this.menu.addMenuItem(darkThemeItem);
 
-	    const lightThemeItem = new PopupMenu.PopupMenuItem(getText("Set light theme"));
-	    lightThemeItem.connect("activate", () => {
-		Main.notify(getText("Light theme set successfully"));
-	    });
-	    this.menu.addMenuItem(lightThemeItem);
-	}
+	const lightThemeItem = new PopupMenu.PopupMenuItem(getText("Set light theme"));
+	lightThemeItem.connect("activate", () => {
+	    Main.notify(getText("Light theme set successfully"));
+	});
+	this.menu.addMenuItem(lightThemeItem);
     }
-);
+}
+
+const ExtensionIndicator = GObject.registerClass(Indicator);
 
 class Extension {
     constructor(uuid) {
@@ -43,13 +43,13 @@ class Extension {
     }
 
     enable() {
-	this._indicator = new Indicator();
-	Main.panel.addToStatusArea(this._uuid, this._indicator);
+	this.indicator = new ExtensionIndicator();
+	Main.panel.addToStatusArea(this._uuid, this.indicator);
     }
 
     disable() {
-	this._indicator.destroy();
-	this._indicator = null;
+	this.indicator.destroy();
+	this.indicator = null;
     }
 }
 
