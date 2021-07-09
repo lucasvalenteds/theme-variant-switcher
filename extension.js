@@ -14,13 +14,16 @@ class ThemeVariantIndicator extends PanelMenu.Button {
     _init() {
 	super._init(0.0, this.i18n.getText("indicator-name"));
 
-	this.add_child(new Style.Icon({
-	    icon_name: 'face-smile-symbolic',
-	    style_class: 'system-status-icon',
-	}));
-
+	this.add_child(this.createIcon());
 	this.menu.addMenuItem(this.createMenuItemDark());
 	this.menu.addMenuItem(this.createMenuItemLight());
+    }
+
+    createIcon() {
+	return new Style.Icon({
+	    icon_name: "face-smile-symbolic",
+	    style_class: "system-status-icon",
+	});
     }
 
     createMenuItemDark() {
