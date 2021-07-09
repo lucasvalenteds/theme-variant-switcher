@@ -1,0 +1,9 @@
+{
+  "name": "Theme Variant Switcher",
+  "description": "Changing theme variant from Light to Dark and vice-versa from notification area",
+  "uuid": "theme-variant-switcher@example.com",
+  "version": 1,
+  "shell-version": [
+    "40"
+  ]
+}
