@@ -9,127 +9,124 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 class AdwaitaThemeVariantManager {
-
     themeName = "Adwaita";
     themeNameDark = this.themeName + "-dark";
     themeNameLight = this.themeName;
 
     constructor() {
-	this.settings = new Gio.Settings({
-	    schema: "org.gnome.desktop.interface",
-	});
+        this.settings = new Gio.Settings({
+            schema: "org.gnome.desktop.interface",
+        });
     }
 
     useDark() {
-	this.useThemeVariant(this.themeNameDark);
+        this.useThemeVariant(this.themeNameDark);
     }
 
     useLight() {
-	this.useThemeVariant(this.themeNameLight);
+        this.useThemeVariant(this.themeNameLight);
     }
 
     getThemeName() {
-	return this.themeName;
+        return this.themeName;
     }
 
     getCurrentThemeVariant() {
-	return this.settings.get_string("gtk-theme");
+        return this.settings.get_string("gtk-theme");
     }
 
     useThemeVariant(variant) {
-	this.setGSettingProperty("org.gnome.desktop.interface", "gtk-theme", variant);
-	this.setGSettingProperty("org.gnome.shell.extensions.user-theme", "name", variant);
+        this.setGSettingProperty("org.gnome.desktop.interface", "gtk-theme", variant);
+        this.setGSettingProperty("org.gnome.shell.extensions.user-theme", "name", variant);
     }
 
     setGSettingProperty(schema, key, value) {
-	GLib.spawn_command_line_sync(`gsettings set ${schema} ${key} ${value}`);
+        GLib.spawn_command_line_sync(`gsettings set ${schema} ${key} ${value}`);
     }
 }
 
 class ThemeVariantIndicator extends PanelMenu.Button {
-
     constructor(domain, manager) {
-	this.domain = domain;
-	this.manager = manager;
+        this.domain = domain;
+        this.manager = manager;
     }
 
     _init(domain, manager) {
-	super._init(0.0, "Theme Variant Indicator");
+        super._init(0.0, "Theme Variant Indicator");
 
-	this.domain = domain;
-	this.manager = manager;
-	this.icon = this.createIcon();
+        this.domain = domain;
+        this.manager = manager;
+        this.icon = this.createIcon();
 
-	this.add_child(this.icon);
-	this.menu.addMenuItem(this.createMenuItemDark());
-	this.menu.addMenuItem(this.createMenuItemLight());
+        this.add_child(this.icon);
+        this.menu.addMenuItem(this.createMenuItemDark());
+        this.menu.addMenuItem(this.createMenuItemLight());
 
-	this.updateIcon();
+        this.updateIcon();
     }
 
     getIconName() {
-	const variant = this.manager.getCurrentThemeVariant();
+        const variant = this.manager.getCurrentThemeVariant();
 
-	if (variant === this.manager.themeNameLight) {
-	    return "weather-clear-symbolic";
-	}
+        if (variant === this.manager.themeNameLight) {
+            return "weather-clear-symbolic";
+        }
 
-	return "weather-clear-night-symbolic";
+        return "weather-clear-night-symbolic";
     }
 
     createIcon() {
-	return new Style.Icon({
-	    icon_name: this.getIconName(),
-	    style_class: "system-status-icon",
-	});
+        return new Style.Icon({
+            icon_name: this.getIconName(),
+            style_class: "system-status-icon",
+        });
     }
 
     updateIcon() {
-	this.icon.icon_name = this.getIconName();
+        this.icon.icon_name = this.getIconName();
 
-	Main.panel.statusArea[this.domain] = null;
-	Main.panel.addToStatusArea(this.domain, this);
+        Main.panel.statusArea[this.domain] = null;
+        Main.panel.addToStatusArea(this.domain, this);
     }
 
     createMenuItemDark() {
-	const text = "Use " + this.manager.getThemeName() + " dark";
-	const item = new PopupMenu.PopupMenuItem(text);
-	item.connect("activate", () => {
-	    this.manager.useDark();
-	    this.updateIcon();
-	});
-	return item;
+        const text = "Use " + this.manager.getThemeName() + " dark";
+        const item = new PopupMenu.PopupMenuItem(text);
+        item.connect("activate", () => {
+            this.manager.useDark();
+            this.updateIcon();
+        });
+        return item;
     }
 
     createMenuItemLight() {
-	const text = "Use " + this.manager.getThemeName() + " light";
-	const item = new PopupMenu.PopupMenuItem(text);
-	item.connect("activate", () => {
-	    this.manager.useLight();
-	    this.updateIcon();
-	});
-	return item;
+        const text = "Use " + this.manager.getThemeName() + " light";
+        const item = new PopupMenu.PopupMenuItem(text);
+        item.connect("activate", () => {
+            this.manager.useLight();
+            this.updateIcon();
+        });
+        return item;
     }
 }
 
 const ThemeVariantIndicatorClass = GObject.registerClass(ThemeVariantIndicator);
 
 class ThemeVariantExtension {
-
     constructor(extension) {
-	this.domain = extension.metadata.uuid;
-	ExtensionUtils.initTranslations(this.domain);
+        this.domain = extension.metadata.uuid;
+        ExtensionUtils.initTranslations(this.domain);
     }
 
     enable() {
-	this.manager = new AdwaitaThemeVariantManager();
-	this.indicator = new ThemeVariantIndicatorClass(this.domain, this.manager);
+        this.manager = new AdwaitaThemeVariantManager();
+        this.indicator = new ThemeVariantIndicatorClass(this.domain, this.manager);
     }
 
     disable() {
-	this.indicator.destroy();
-	this.indicator = null;
-	this.manager = null;
+        this.indicator.destroy();
+        this.indicator = null;
+        this.manager = null;
     }
 }
 
