@@ -9,7 +9,8 @@ const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-class Indicator extends PanelMenu.Button {
+class ThemeVariantIndicator extends PanelMenu.Button {
+
     _init() {
 	super._init(0.0, getText('My Shiny Indicator'));
 
@@ -32,7 +33,7 @@ class Indicator extends PanelMenu.Button {
     }
 }
 
-const ExtensionIndicator = GObject.registerClass(Indicator);
+const ExtensionIndicator = GObject.registerClass(ThemeVariantIndicator);
 const ExtensionUtils = imports.misc.extensionUtils;
 
 class Extension {
