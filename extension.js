@@ -5,7 +5,6 @@ const { GObject, St } = imports.gi;
 const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
 const getText = Gettext.gettext;
 
-const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
@@ -34,17 +33,18 @@ class Indicator extends PanelMenu.Button {
 }
 
 const ExtensionIndicator = GObject.registerClass(Indicator);
+const ExtensionUtils = imports.misc.extensionUtils;
 
 class Extension {
-    constructor(uuid) {
-	this._uuid = uuid;
 
-	ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
+    constructor(currentExtension) {
+	this.uuid = currentExtension.meta.uuid;
+	ExtensionUtils.initTranslations(this.uuid);
     }
 
     enable() {
 	this.indicator = new ExtensionIndicator();
-	Main.panel.addToStatusArea(this._uuid, this.indicator);
+	Main.panel.addToStatusArea(this.uuid, this.indicator);
     }
 
     disable() {
@@ -53,6 +53,7 @@ class Extension {
     }
 }
 
-function init(meta) {
-    return new Extension(meta.uuid);
+function init() {
+    return new Extension(ExtensionUtils.getCurrentExtension());
 }
+
