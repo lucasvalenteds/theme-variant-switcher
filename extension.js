@@ -1,7 +1,6 @@
 const ExtensionUtils = imports.misc.extensionUtils;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const GetText = imports.gettext;
 const Style = imports.gi.St;
 
 const Main = imports.ui.main;
@@ -10,12 +9,16 @@ const PopupMenu = imports.ui.popupMenu;
 
 class AdwaitaThemeVariantManager {
 
+    getThemeName() {
+	return "Adwaita";
+    }
+
     useDark() {
-	this.useThemeVariant("Adwaita-dark");
+	this.useThemeVariant(this.getThemeName() + "-dark");
     }
 
     useLight() {
-	this.useThemeVariant("Adwaita");
+	this.useThemeVariant(this.getThemeName());
     }
 
     useThemeVariant(variant) {
@@ -28,28 +31,15 @@ class AdwaitaThemeVariantManager {
     }
 }
 
-class ThemeVariantResources {
-
-    constructor(domain) {
-	this.domain = GetText.domain(domain);
-    }
-
-    getValue(key) {
-	return this.domain.gettext(key);
-    }
-}
-
 class ThemeVariantIndicator extends PanelMenu.Button {
 
-    constructor(resources, manager) {
-	this.resources = resources;
+    constructor(manager) {
 	this.manager = manager;
     }
 
-    _init(resources, manager) {
-	super._init(0.0, resources.getValue("indicator-name"));
+    _init(manager) {
+	super._init(0.0, "Theme Variant Indicator");
 
-	this.resources = resources;
 	this.manager = manager;
 	this.add_child(this.createIcon());
 	this.menu.addMenuItem(this.createMenuItemDark());
@@ -64,15 +54,15 @@ class ThemeVariantIndicator extends PanelMenu.Button {
     }
 
     createMenuItemDark() {
-	const label = this.resources.getValue("indicator-menu-item-label-dark")
-	const item = new PopupMenu.PopupMenuItem(label);
+	const text = "Use " + this.manager.getThemeName() + " dark";
+	const item = new PopupMenu.PopupMenuItem(text);
 	item.connect("activate", () => this.manager.useDark());
 	return item;
     }
 
     createMenuItemLight() {
-	const label = this.resources.getValue("indicator-menu-item-label-light")
-	const item = new PopupMenu.PopupMenuItem(label);
+	const text = "Use " + this.manager.getThemeName() + " light";
+	const item = new PopupMenu.PopupMenuItem(text);
 	item.connect("activate", () => this.manager.useLight());
 	return item;
     }
@@ -88,9 +78,8 @@ class ThemeVariantExtension {
     }
 
     enable() {
-	this.resources = new ThemeVariantResources(this.domain);
 	this.manager = new AdwaitaThemeVariantManager();
-	this.indicator = new ThemeVariantIndicatorClass(this.resources, this.manager);
+	this.indicator = new ThemeVariantIndicatorClass(this.manager);
 
 	Main.panel.addToStatusArea(this.domain, this.indicator);
     }
@@ -98,7 +87,6 @@ class ThemeVariantExtension {
     disable() {
 	this.indicator.destroy();
 	this.indicator = null;
-	this.resources = null;
 	this.manager = null;
     }
 }
