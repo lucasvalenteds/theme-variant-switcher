@@ -1,5 +1,7 @@
-const Style = imports.gi.St;
+const ExtensionUtils = imports.misc.extensionUtils;
 const GObject = imports.gi.GObject;
+const GetText = imports.gettext;
+const Style = imports.gi.St;
 
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
@@ -44,12 +46,10 @@ class ThemeVariantIndicator extends PanelMenu.Button {
     }
 }
 
-const ExtensionGetText = imports.gettext;
-
 class I18n {
 
     constructor(domain) {
-	this.domain= ExtensionGetText.domain(domain);
+	this.domain= GetText.domain(domain);
     }
 
     getText(key) {
@@ -58,7 +58,6 @@ class I18n {
 }
 
 const ExtensionIndicator = GObject.registerClass(ThemeVariantIndicator);
-const ExtensionUtils = imports.misc.extensionUtils;
 
 class Extension {
 
