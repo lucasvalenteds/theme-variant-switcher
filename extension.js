@@ -28,17 +28,28 @@ class AdwaitaThemeVariantManager {
     }
 }
 
+class ThemeVariantResources {
+
+    constructor(domain) {
+	this.domain = GetText.domain(domain);
+    }
+
+    getValue(key) {
+	return this.domain.gettext(key);
+    }
+}
+
 class ThemeVariantIndicator extends PanelMenu.Button {
 
-    constructor(i18n, manager) {
-	this.i18n = i18n;
+    constructor(resources, manager) {
+	this.resources = resources;
 	this.manager = manager;
     }
 
-    _init(i18n, manager) {
-	super._init(0.0, i18n.getText("indicator-name"));
+    _init(resources, manager) {
+	super._init(0.0, resources.getValue("indicator-name"));
 
-	this.i18n = i18n;
+	this.resources = resources;
 	this.manager = manager;
 	this.add_child(this.createIcon());
 	this.menu.addMenuItem(this.createMenuItemDark());
@@ -53,28 +64,17 @@ class ThemeVariantIndicator extends PanelMenu.Button {
     }
 
     createMenuItemDark() {
-	const label = this.i18n.getText("indicator-menu-item-label-dark")
+	const label = this.resources.getValue("indicator-menu-item-label-dark")
 	const item = new PopupMenu.PopupMenuItem(label);
 	item.connect("activate", () => this.manager.useDark());
 	return item;
     }
 
     createMenuItemLight() {
-	const label = this.i18n.getText("indicator-menu-item-label-light")
+	const label = this.resources.getValue("indicator-menu-item-label-light")
 	const item = new PopupMenu.PopupMenuItem(label);
 	item.connect("activate", () => this.manager.useLight());
 	return item;
-    }
-}
-
-class I18n {
-
-    constructor(domain) {
-	this.domain = GetText.domain(domain);
-    }
-
-    getText(key) {
-	return this.domain.gettext(key);
     }
 }
 
@@ -88,9 +88,9 @@ class ThemeVariantExtension {
     }
 
     enable() {
-	this.i18n = new I18n(this.domain);
+	this.resources = new ThemeVariantResources(this.domain);
 	this.manager = new AdwaitaThemeVariantManager();
-	this.indicator = new ThemeVariantIndicatorClass(this.i18n, this.manager);
+	this.indicator = new ThemeVariantIndicatorClass(this.resources, this.manager);
 
 	Main.panel.addToStatusArea(this.domain, this.indicator);
     }
@@ -98,7 +98,7 @@ class ThemeVariantExtension {
     disable() {
 	this.indicator.destroy();
 	this.indicator = null;
-	this.i18n = null;
+	this.resources = null;
 	this.manager = null;
     }
 }
