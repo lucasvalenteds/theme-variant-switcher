@@ -78,9 +78,9 @@ class I18n {
     }
 }
 
-const ExtensionIndicator = GObject.registerClass(ThemeVariantIndicator);
+const ThemeVariantIndicatorClass = GObject.registerClass(ThemeVariantIndicator);
 
-class Extension {
+class ThemeVariantExtension {
 
     constructor(extension) {
 	this.domain = extension.metadata.uuid;
@@ -90,7 +90,7 @@ class Extension {
     enable() {
 	this.i18n = new I18n(this.domain);
 	this.manager = new AdwaitaThemeVariantManager();
-	this.indicator = new ExtensionIndicator(this.i18n, this.manager);
+	this.indicator = new ThemeVariantIndicatorClass(this.i18n, this.manager);
 
 	Main.panel.addToStatusArea(this.domain, this.indicator);
     }
@@ -104,6 +104,6 @@ class Extension {
 }
 
 function init() {
-    return new Extension(ExtensionUtils.getCurrentExtension());
+    return new ThemeVariantExtension(ExtensionUtils.getCurrentExtension());
 }
 
