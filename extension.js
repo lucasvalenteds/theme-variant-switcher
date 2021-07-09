@@ -1,6 +1,7 @@
 const ExtensionUtils = imports.misc.extensionUtils;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
+const Gio = imports.gi.Gio;
 const Style = imports.gi.St;
 
 const Main = imports.ui.main;
@@ -9,16 +10,30 @@ const PopupMenu = imports.ui.popupMenu;
 
 class AdwaitaThemeVariantManager {
 
-    getThemeName() {
-	return "Adwaita";
+    themeName = "Adwaita";
+    themeNameDark = this.themeName + "-dark";
+    themeNameLight = this.themeName;
+
+    constructor() {
+	this.settings = new Gio.Settings({
+	    schema: "org.gnome.desktop.interface",
+	});
     }
 
     useDark() {
-	this.useThemeVariant(this.getThemeName() + "-dark");
+	this.useThemeVariant(this.themeNameDark);
     }
 
     useLight() {
-	this.useThemeVariant(this.getThemeName());
+	this.useThemeVariant(this.themeNameLight);
+    }
+
+    getThemeName() {
+	return this.themeName;
+    }
+
+    getCurrentThemeVariant() {
+	return this.settings.get_string("gtk-theme");
     }
 
     useThemeVariant(variant) {
@@ -33,37 +48,66 @@ class AdwaitaThemeVariantManager {
 
 class ThemeVariantIndicator extends PanelMenu.Button {
 
-    constructor(manager) {
+    constructor(domain, manager) {
+	this.domain = domain;
 	this.manager = manager;
     }
 
-    _init(manager) {
+    _init(domain, manager) {
 	super._init(0.0, "Theme Variant Indicator");
 
+	this.domain = domain;
 	this.manager = manager;
-	this.add_child(this.createIcon());
+	this.icon = this.createIcon();
+
+	this.add_child(this.icon);
 	this.menu.addMenuItem(this.createMenuItemDark());
 	this.menu.addMenuItem(this.createMenuItemLight());
+
+	this.updateIcon();
+    }
+
+    getIconName() {
+	const variant = this.manager.getCurrentThemeVariant();
+
+	if (variant === this.manager.themeNameLight) {
+	    return "weather-clear-symbolic";
+	}
+
+	return "weather-clear-night-symbolic";
     }
 
     createIcon() {
 	return new Style.Icon({
-	    icon_name: "weather-clear-symbolic",
+	    icon_name: this.getIconName(),
 	    style_class: "system-status-icon",
 	});
+    }
+
+    updateIcon() {
+	this.icon.icon_name = this.getIconName();
+
+	Main.panel.statusArea[this.domain] = null;
+	Main.panel.addToStatusArea(this.domain, this);
     }
 
     createMenuItemDark() {
 	const text = "Use " + this.manager.getThemeName() + " dark";
 	const item = new PopupMenu.PopupMenuItem(text);
-	item.connect("activate", () => this.manager.useDark());
+	item.connect("activate", () => {
+	    this.manager.useDark();
+	    this.updateIcon();
+	});
 	return item;
     }
 
     createMenuItemLight() {
 	const text = "Use " + this.manager.getThemeName() + " light";
 	const item = new PopupMenu.PopupMenuItem(text);
-	item.connect("activate", () => this.manager.useLight());
+	item.connect("activate", () => {
+	    this.manager.useLight();
+	    this.updateIcon();
+	});
 	return item;
     }
 }
@@ -79,9 +123,7 @@ class ThemeVariantExtension {
 
     enable() {
 	this.manager = new AdwaitaThemeVariantManager();
-	this.indicator = new ThemeVariantIndicatorClass(this.manager);
-
-	Main.panel.addToStatusArea(this.domain, this.indicator);
+	this.indicator = new ThemeVariantIndicatorClass(this.domain, this.manager);
     }
 
     disable() {
