@@ -13,9 +13,10 @@ class ThemeVariantIndicator extends PanelMenu.Button {
 	this.i18n = i18n;
     }
 
-    _init() {
-	super._init(0.0, this.i18n.getText("indicator-name"));
+    _init(i18n) {
+	super._init(0.0, i18n.getText("indicator-name"));
 
+	this.i18n = i18n;
 	this.add_child(this.createIcon());
 	this.menu.addMenuItem(this.createMenuItemDark());
 	this.menu.addMenuItem(this.createMenuItemLight());
@@ -62,7 +63,7 @@ const ExtensionIndicator = GObject.registerClass(ThemeVariantIndicator);
 class Extension {
 
     constructor(extension) {
-	this.domain = extension.meta.uuid;
+	this.domain = extension.metadata.uuid;
 	ExtensionUtils.initTranslations(this.domain);
     }
 
