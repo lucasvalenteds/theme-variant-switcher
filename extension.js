@@ -7,29 +7,28 @@ const PopupMenu = imports.ui.popupMenu;
 
 const GETTEXT_DOMAIN = 'my-indicator-extension';
 const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
-const getText = Gettext.gettext;
+const _ = Gettext.gettext;
 
 class ThemeVariantIndicator extends PanelMenu.Button {
 
     _init() {
-	super._init(0.0, getText('My Shiny Indicator'));
+	super._init(0.0, _("indicator-name"));
 
 	this.add_child(new Style.Icon({
 	    icon_name: 'face-smile-symbolic',
 	    style_class: 'system-status-icon',
 	}));
 
-	const darkThemeItem = new PopupMenu.PopupMenuItem(getText("Set dark theme"));
-	darkThemeItem.connect("activate", () => {
-	    Main.notify(getText("Dark theme set successfully"));
-	});
+	const darkThemeItem = new PopupMenu.PopupMenuItem(_("indicator-menu-item-label-dark"));
+	darkThemeItem.connect("activate", this.change);
 	this.menu.addMenuItem(darkThemeItem);
 
-	const lightThemeItem = new PopupMenu.PopupMenuItem(getText("Set light theme"));
-	lightThemeItem.connect("activate", () => {
-	    Main.notify(getText("Light theme set successfully"));
-	});
+	const lightThemeItem = new PopupMenu.PopupMenuItem(_("indicator-menu-item-label-light"));
+	lightThemeItem.connect("activate", this.change);
 	this.menu.addMenuItem(lightThemeItem);
+    }
+
+    change() {
     }
 }
 
