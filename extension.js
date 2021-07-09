@@ -24,7 +24,7 @@ class ThemeVariantIndicator extends PanelMenu.Button {
 
     createIcon() {
 	return new Style.Icon({
-	    icon_name: "face-smile-symbolic",
+	    icon_name: "weather-clear-symbolic",
 	    style_class: "system-status-icon",
 	});
     }
