@@ -20,11 +20,17 @@ const Indicator = GObject.registerClass(
 		style_class: 'system-status-icon',
 	    }));
 
-	    let item = new PopupMenu.PopupMenuItem(getText('Show Notification'));
-	    item.connect('activate', () => {
-		Main.notify(getText('Whatʼs up, folks?!!!!'));
+	    const darkThemeItem = new PopupMenu.PopupMenuItem(getText("Set dark theme"));
+	    darkThemeItem.connect("activate", () => {
+		Main.notify(getText("Dark theme set successfully"));
 	    });
-	    this.menu.addMenuItem(item);
+	    this.menu.addMenuItem(darkThemeItem);
+
+	    const lightThemeItem = new PopupMenu.PopupMenuItem(getText("Set light theme"));
+	    lightThemeItem.connect("activate", () => {
+		Main.notify(getText("Light theme set successfully"));
+	    });
+	    this.menu.addMenuItem(lightThemeItem);
 	}
     }
 );
