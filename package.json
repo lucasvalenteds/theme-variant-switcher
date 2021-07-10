@@ -1,0 +1,20 @@
+{
+    "name": "theme-variant-switcher",
+    "version": "0.1.0",
+    "description": "GNOME Shell Extension to switch between Adwaita dark and light theme variants.",
+    "scripts": {
+	"lint": "prettier --write *.js"
+    },
+    "devDependencies": {
+	"prettier": "2.3.2"
+    },
+    "prettier": {
+	"tabWidth": 4,
+	"semi": true,
+	"singleQuote": false,
+	"trailingComma": "es5",
+	"bracketSpacing": true,
+	"arrowParens": "always",
+	"printWidth": 120
+    }
+}

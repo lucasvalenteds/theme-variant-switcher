@@ -20,14 +20,17 @@ $ tree ~/.local/share/gnome-shell/extensions
     └── README.md
 ```
 
-## How to run
-
 | Description | Command |
 | :--- | :--- |
 | Enable the extension | `gnome-extensions enable <uuid>` |
 | Disable the extension | `gnome-extensions disable <uuid>` |
 
-> Note: the extension can be managed via GNOME Extensions GUI too.
+## How to run
+
+| Description | Command |
+| :--- | :--- |
+| Install dependencies | `npm install` |
+| Format the code | `npm run lint` |
 
 ## Preview
 
