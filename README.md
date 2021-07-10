@@ -22,10 +22,10 @@ $ tree ~/.local/share/gnome-shell/extensions
 
 ## How to run
 
-| Command | Description |
+| Description | Command |
 | :--- | :--- |
-| Enable the extension | `gnome-extensions enable theme-variant-switcher@example.com` |
-| Disable the extension | `gnome-extensions disable theme-variant-switcher@example.com` |
+| Enable the extension | `gnome-extensions enable <uuid>` |
+| Disable the extension | `gnome-extensions disable <uuid>` |
 
 > Note: the extension can be managed via GNOME Extensions GUI too.
 
