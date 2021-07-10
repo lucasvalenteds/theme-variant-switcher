@@ -1,5 +1,4 @@
 const ExtensionUtils = imports.misc.extensionUtils;
-const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
 const Style = imports.gi.St;
@@ -14,9 +13,20 @@ class AdwaitaThemeVariantManager {
     themeNameLight = this.themeName;
 
     constructor() {
-        this.settings = new Gio.Settings({
+        this.themeSettings = new Gio.Settings({
             schema: "org.gnome.desktop.interface",
         });
+        this.userSettings = new Gio.Settings({
+            schema: "org.gnome.shell.extensions.user-theme",
+        });
+    }
+
+    getThemeName() {
+        return this.themeName;
+    }
+
+    getCurrentThemeVariant() {
+        return this.themeSettings.get_string("gtk-theme");
     }
 
     useDark() {
@@ -27,21 +37,9 @@ class AdwaitaThemeVariantManager {
         this.useThemeVariant(this.themeNameLight);
     }
 
-    getThemeName() {
-        return this.themeName;
-    }
-
-    getCurrentThemeVariant() {
-        return this.settings.get_string("gtk-theme");
-    }
-
     useThemeVariant(variant) {
-        this.setGSettingProperty("org.gnome.desktop.interface", "gtk-theme", variant);
-        this.setGSettingProperty("org.gnome.shell.extensions.user-theme", "name", variant);
-    }
-
-    setGSettingProperty(schema, key, value) {
-        GLib.spawn_command_line_sync(`gsettings set ${schema} ${key} ${value}`);
+	this.themeSettings.set_string("gtk-theme", variant);
+	this.userSettings.set_string("name", variant);
     }
 }
 
