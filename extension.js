@@ -113,7 +113,6 @@ const ThemeVariantIndicatorClass = GObject.registerClass(ThemeVariantIndicator);
 class ThemeVariantExtension {
     constructor(extension) {
         this.domain = extension.metadata.uuid;
-        ExtensionUtils.initTranslations(this.domain);
     }
 
     enable() {
