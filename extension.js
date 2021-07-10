@@ -38,8 +38,8 @@ class AdwaitaThemeVariantManager {
     }
 
     useThemeVariant(variant) {
-	this.themeSettings.set_string("gtk-theme", variant);
-	this.userSettings.set_string("name", variant);
+        this.themeSettings.set_string("gtk-theme", variant);
+        this.userSettings.set_string("name", variant);
     }
 }
 
@@ -130,4 +130,3 @@ class ThemeVariantExtension {
 function init() {
     return new ThemeVariantExtension(ExtensionUtils.getCurrentExtension());
 }
-
